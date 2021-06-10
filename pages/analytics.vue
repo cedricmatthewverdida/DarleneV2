@@ -8,11 +8,13 @@
       >
 
         <v-card
+          color="primary"
           elevation="2"
-          width="400px"
+          width="300px"
+          height="150px"
         >
-        <v-card-title class="caption">Total Classified</v-card-title>
-          <v-card-text class="text-center headline">
+        <v-card-title class="caption white--text">Total Classified</v-card-title>
+          <v-card-text class="text-center headline white--text p-15 mt-3">
             {{classification.tweetCount}}
           </v-card-text>
         </v-card>
@@ -25,12 +27,14 @@
 
         <v-card
           elevation="2"
+          color="indigo darken-4"
+          height="150px"
         >
-          <v-card-title class="caption">
-            <v-icon small class="mr-2">mdi-bullhorn-outline</v-icon>
+          <v-card-title class="caption white--text">
+            <v-icon class="mr-2 white--text">mdi-bullhorn-outline</v-icon>
             Announcement
           </v-card-title>
-          <v-card-text class="text-center headline">
+          <v-card-text class="text-center headline white--text mt-3">
             {{classification.caCount}}
           </v-card-text>
         </v-card>
@@ -43,12 +47,14 @@
 
         <v-card
           elevation="2"
+          color="orange darken-4"
+          height="150px"
         >
-        <v-card-title class="caption">
-          <v-icon small class="mr-2">mdi-bell-alert-outline</v-icon>
+        <v-card-title class="caption white--text">
+          <v-icon class="mr-2 white--text">mdi-bell-alert-outline</v-icon>
           Casualty Damage
         </v-card-title>
-          <v-card-text class="text-center headline">
+          <v-card-text class="text-center headline white--text mt-3">
             {{classification.cdCount}}
           </v-card-text>
         </v-card>
@@ -61,12 +67,14 @@
 
         <v-card
           elevation="2"
+          color="cyan darken-4"
+          height="150px"
         >
-        <v-card-title class="caption">
-          <v-icon small class="mr-2">mdi-account-tie-voice-outline</v-icon>
+        <v-card-title class="caption white--text">
+          <v-icon class="mr-2 white--text">mdi-account-tie-voice-outline</v-icon>
           Call for Help
         </v-card-title>
-          <v-card-text class="text-center headline">
+          <v-card-text class="text-center headline white--text mt-3">
             {{classification.chCount}}
           </v-card-text>
         </v-card>
@@ -79,9 +87,11 @@
 
         <v-card
           elevation="2"
+          color="blue-grey darken-4"
+          height="150px"
         >
-        <v-card-title class="caption">Others</v-card-title>
-          <v-card-text class="text-center headline">
+        <v-card-title class="caption white--text">Others</v-card-title>
+          <v-card-text class="text-center headline white--text mt-3">
             {{classification.oCount}}
           </v-card-text>
         </v-card>
@@ -91,63 +101,67 @@
 
     
 
-    <v-card
-    elevation="1"
-    class="mt-5"
-    >
-    <v-card-title> 
+
+    <v-row>
+      <v-col>
+
+            <v-card
+            elevation="1"
+            class="mt-5"
+            >
+              <v-card-title> 
 
 
-      <v-select
-        rounded
-        v-model="activechart"
-        :items="items"
-        class="qq"
-        solo
-        label="Select Chart Style"
-      ></v-select>
+                <v-select
+                  rounded
+                  v-model="activechart"
+                  :items="items"
+                  class="qq"
+                  label="Select Chart Style"
+                ></v-select>
 
 
-    </v-card-title>
-      <v-container class="pa-10">
-      <BarChart :ClassifiedList = "toChart" v-if="activechart == 'Bar Chart'"/>
-      <PieChart :ClassifiedList = "toChart" v-if="activechart == 'Pie Chart'"/>
-      </v-container>
-    </v-card>
-    
+              </v-card-title>
+                <BarChart :ClassifiedList = "toChart" v-if="activechart == 'Bar Chart'"/>
+                <PieChart :ClassifiedList = "toChart" v-if="activechart == 'Pie Chart'"/>
+            </v-card>
 
-   
+      </v-col>
 
- 
-    <v-card
-    elevation="1"
-    class="mt-5"
-    >
-      <v-card-title>
-        <v-select
-          solo
-          v-model="ShowClassifiedWord"
-          :items="category"
-          class="qq"
-          label="Select to Classify Word Cloud"
-          rounded
-        ></v-select>
-      </v-card-title>
+      <v-col>
 
-      <v-container class="pa-5">
+        <v-card
+        elevation="1"
+        class="mt-5"
+        >
+          <v-card-title>
+            <v-select
+              v-model="ShowClassifiedWord"
+              :items="category"
+              class="qq"
+              label="Select to Classify Word Cloud"
+              rounded
+            ></v-select>
+          </v-card-title>
 
-          <vue-word-cloud
-          style="
-              height: 480px;
-          "
-          :words="ClassfiedWordCloud"
-          :color="([, weight]) => weight > 10 ? '#AD5048' : weight > 5 ? '#0C1D24' : '#46373A'"
-          font-family="Bahiana"
-          rotation-unit="turn"
-          />
+          <v-container class="pa-5">
 
-      </v-container>
-    </v-card>
+              <vue-word-cloud
+              style="
+                  height: 255px;
+              "
+              :words="ClassfiedWordCloud"
+              :color="([, weight]) => weight > 10 ? '#AD5048' : weight > 5 ? '#0C1D24' : '#46373A'"
+              font-family="Bahiana"
+              rotation-unit="turn"
+              />
+
+          </v-container>
+        </v-card>
+
+      </v-col>
+    </v-row>
+
 
   </div>
 </template>
@@ -248,7 +262,7 @@ export default {
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Bahiana&family=Merienda&display=swap');
 .qq{
-      max-width: 200px;
+      max-width: 300px;
 }
 
 </style>

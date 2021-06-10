@@ -4,12 +4,12 @@ import { normalizeURL, decode } from 'ufo'
 import { interopDefault } from './utils'
 import scrollBehavior from './router.scrollBehavior.js'
 
-const _e6e2c9e0 = () => interopDefault(import('..\\pages\\admin.vue' /* webpackChunkName: "pages/admin" */))
-const _46b5c347 = () => interopDefault(import('..\\pages\\analytics.vue' /* webpackChunkName: "pages/analytics" */))
-const _6d2fdb55 = () => interopDefault(import('..\\pages\\dashboard.vue' /* webpackChunkName: "pages/dashboard" */))
-const _5475946c = () => interopDefault(import('..\\pages\\forecast.vue' /* webpackChunkName: "pages/forecast" */))
-const _f385f31c = () => interopDefault(import('..\\pages\\register.vue' /* webpackChunkName: "pages/register" */))
-const _5b1f4713 = () => interopDefault(import('..\\pages\\index.vue' /* webpackChunkName: "pages/index" */))
+const _d9c2f496 = () => interopDefault(import('..\\pages\\admin.vue' /* webpackChunkName: "pages/admin" */))
+const _5855d36c = () => interopDefault(import('..\\pages\\analytics.vue' /* webpackChunkName: "pages/analytics" */))
+const _7ecfeb7a = () => interopDefault(import('..\\pages\\dashboard.vue' /* webpackChunkName: "pages/dashboard" */))
+const _7b800d05 = () => interopDefault(import('..\\pages\\forecast.vue' /* webpackChunkName: "pages/forecast" */))
+const _2bf7ddad = () => interopDefault(import('..\\pages\\register.vue' /* webpackChunkName: "pages/register" */))
+const _61af31b8 = () => interopDefault(import('..\\pages\\index.vue' /* webpackChunkName: "pages/index" */))
 
 const emptyFn = () => {}
 
@@ -24,27 +24,27 @@ export const routerOptions = {
 
   routes: [{
     path: "/admin",
-    component: _e6e2c9e0,
+    component: _d9c2f496,
     name: "admin"
   }, {
     path: "/analytics",
-    component: _46b5c347,
+    component: _5855d36c,
     name: "analytics"
   }, {
     path: "/dashboard",
-    component: _6d2fdb55,
+    component: _7ecfeb7a,
     name: "dashboard"
   }, {
     path: "/forecast",
-    component: _5475946c,
+    component: _7b800d05,
     name: "forecast"
   }, {
     path: "/register",
-    component: _f385f31c,
+    component: _2bf7ddad,
     name: "register"
   }, {
     path: "/",
-    component: _5b1f4713,
+    component: _61af31b8,
     name: "index"
   }],
 
