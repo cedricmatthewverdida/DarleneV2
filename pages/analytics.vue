@@ -2,6 +2,19 @@
   <div>
 
 
+    <v-text-field
+      :disabled="loadclassification"
+      v-model="search"
+      rounded
+      outlined
+      :loading="loadclassification"
+      label="Search Tweet"
+      prepend-inner-icon="mdi-magnify"
+      @keyup.enter="get_classification"
+    ></v-text-field>
+
+
+<div v-if="classification.length != 0">
     <v-row no-gutters>
       <v-col
         class="pa-2"
@@ -11,11 +24,10 @@
           color="primary"
           elevation="2"
           width="300px"
-          height="150px"
         >
         <v-card-title class="caption white--text">Total Classified</v-card-title>
-          <v-card-text class="text-center headline white--text p-15 mt-3">
-            {{classification.tweetCount}}
+          <v-card-text class="text-center headline white--text p-15">
+            {{classification.analytics.TWEET_LENGTH}}
           </v-card-text>
         </v-card>
         
@@ -28,14 +40,13 @@
         <v-card
           elevation="2"
           color="indigo darken-4"
-          height="150px"
         >
           <v-card-title class="caption white--text">
             <v-icon class="mr-2 white--text">mdi-bullhorn-outline</v-icon>
             Announcement
           </v-card-title>
-          <v-card-text class="text-center headline white--text mt-3">
-            {{classification.caCount}}
+          <v-card-text class="text-center headline white--text">
+            {{classification.analytics.CA_LENGTH}}
           </v-card-text>
         </v-card>
         
@@ -44,18 +55,16 @@
       <v-col
         class="pa-2"
       >
-
         <v-card
           elevation="2"
           color="orange darken-4"
-          height="150px"
         >
         <v-card-title class="caption white--text">
           <v-icon class="mr-2 white--text">mdi-bell-alert-outline</v-icon>
           Casualty Damage
         </v-card-title>
-          <v-card-text class="text-center headline white--text mt-3">
-            {{classification.cdCount}}
+          <v-card-text class="text-center headline white--text">
+            {{classification.analytics.CD_LENGTH}}
           </v-card-text>
         </v-card>
         
@@ -68,14 +77,13 @@
         <v-card
           elevation="2"
           color="cyan darken-4"
-          height="150px"
         >
         <v-card-title class="caption white--text">
           <v-icon class="mr-2 white--text">mdi-account-tie-voice-outline</v-icon>
           Call for Help
         </v-card-title>
-          <v-card-text class="text-center headline white--text mt-3">
-            {{classification.chCount}}
+          <v-card-text class="text-center headline white--text">
+            {{classification.analytics.CH_LENGTH}}
           </v-card-text>
         </v-card>
         
@@ -88,18 +96,15 @@
         <v-card
           elevation="2"
           color="blue-grey darken-4"
-          height="150px"
         >
         <v-card-title class="caption white--text">Others</v-card-title>
-          <v-card-text class="text-center headline white--text mt-3">
-            {{classification.oCount}}
+          <v-card-text class="text-center headline white--text">
+            {{classification.analytics.O_LENGTH}}
           </v-card-text>
         </v-card>
         
       </v-col>
     </v-row>
-
-    
 
 
     <v-row>
@@ -150,7 +155,7 @@
               style="
                   height: 255px;
               "
-              :words="ClassfiedWordCloud"
+              :words="convert_to_abrevations"
               :color="([, weight]) => weight > 10 ? '#AD5048' : weight > 5 ? '#0C1D24' : '#46373A'"
               font-family="Bahiana"
               rotation-unit="turn"
@@ -161,6 +166,15 @@
 
       </v-col>
     </v-row>
+</div>
+   <div class="d-flex justify-center" v-else>
+      <v-img 
+      max-height="500"
+      max-width="800"
+      :src="require('@/assets/analytics.png')">
+
+      </v-img>
+   </div>
 
 
   </div>
@@ -179,6 +193,7 @@ export default {
   },
   data() {
     return {
+      search: '',
       classification: [],
       toChart: [],
       loadclassification:false,
@@ -201,60 +216,48 @@ export default {
       convert_to_abrevations : function (){
 
                 if(this.ShowClassifiedWord == "Announcement")
-                    return "getCA_WORDS";
+                    return this.ClassfiedWordCloud.CA;
                 if(this.ShowClassifiedWord == "Others")
-                    return "getO_WORDS";
+                    return this.ClassfiedWordCloud.O;
                 if(this.ShowClassifiedWord == "Casualty and Damage")
-                    return "getCD_WORDS";
+                    return this.ClassfiedWordCloud.CD;
                 if(this.ShowClassifiedWord == "Call for Help")
-                    return "getCH_WORDS";
+                    return this.ClassfiedWordCloud.CH;
       },
-  },
-  watch:{
-    ShowClassifiedWord : function (){
-      this.loadWordCloud();
-    }
+      validatestring : function (){
+        return this.search.replace("#", "%23");
+      },
   },
   methods:{
     async get_classification (){
         try{
+        this.toChart = [];
         this.loadclassification = true;
-        const Classify = await this.$axios.get('/Tweet/getAnalytics/');
+        const Classify = await this.$axios.get('/Tweet/getUserAnalytics/?data='+`${this.validatestring}`);
         
          const ClassifyObj = await Classify.data;
 
         if(Classify.status == 200){
           this.classification = ClassifyObj;
           
-          this.toChart = Object.values(ClassifyObj);
-          this.toChart.shift();
+          this.toChart.push(
+            this.classification.analytics.CA_LENGTH,
+            this.classification.analytics.CD_LENGTH,
+            this.classification.analytics.CH_LENGTH,
+            this.classification.analytics.O_LENGTH,
+          )
+
+
+          this.ClassfiedWordCloud = ClassifyObj.words;
+
+          console.log(this.toChart);
         }
 
         }catch {
           alert("Failed to fetch");
         }
         this.loadclassification = false;
-    },
-    async loadWordCloud (){
-        try{
-        this.loadclassification = true;
-        const Classify = await this.$axios.get('/Tweet/'+`${this.convert_to_abrevations}`+'/');
-        
-         const ClassifyObj = await Classify.data;
-
-        if(Classify.status == 200){
-          this.ClassfiedWordCloud = ClassifyObj.values;
-        }
-
-        }catch {
-          alert("Failed to fetch");
-        }
-        this.loadclassification = false;
-    },
-  },
-  created(){
-    this.get_classification()
-    this.loadWordCloud();
+    }
   }
 }
 </script>
