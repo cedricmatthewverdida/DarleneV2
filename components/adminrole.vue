@@ -24,6 +24,10 @@
         <v-card-title>
             Persons who submitted
             <v-spacer></v-spacer>
+            <v-btn @click="Accuracy = true,get_ai_versions()" text>
+                <v-icon small class="mr-2">mdi-brain</v-icon>
+                    Use Different Version
+            </v-btn>
             <v-btn @click="TrainMe = true" text>
                 <v-icon small class="mr-2">mdi-robot-outline</v-icon>
                 Train AI.
@@ -234,7 +238,7 @@
 
 
 
-
+        <!-- Registered user -->
         <v-card
         elevation="2"
         class="mt-5"
@@ -273,17 +277,106 @@
 
 
         </v-card>
+        <!-- Registered user -->
 
 
 
 
 
+        <v-dialog
+            v-model="Accuracy"
+            persistent
+            max-width="800px"
+        >
+        <v-card shaped :loading="AcurracyStatus">
+          <v-card-title>
+                <v-select
+                  :disabled="AcurracyStatus"
+                  :loading="versionload"
+                  rounded
+                  v-model="SelectedVersion"
+                  :items="AIVersions"
+                  class="qq"
+                  label="Load AI Version"
+                ></v-select>
+          </v-card-title>
+          
+
+           <div v-if="AIVersionAccuracy.length != 0" class="pa-10">
+                
+                <v-container>
+
+                    <div class="d-flex justify-center">
+                        <h4 class="overline">Average accuracy: </h4>
+                        <h5 class="overline">{{AIVersionAccuracy.accuracy_score}}</h5>
+                    </div>
+                    
+                    <v-card
+                        v-for="(accuracy,key) in AIVersionAccuracy.avg_ascore"
+                        :key="key"
+                        tile
+                        class="pa-5 my-3"
+                    >
+                    <v-card-title class="overline">
+                        {{accuracy.classified}}
+                    </v-card-title>
+                       
+                        <div class="d-flex justify-center">
+                            <div class="pa-3">
+                                <h3 class="overline">Precision</h3>
+                                <h5 class="caption">{{accuracy[0]}}</h5>
+                            </div>
+
+                            <div class="pa-3">
+                                <h3 class="overline">Recall</h3>
+                                <h5 class="caption">{{accuracy[1]}}</h5>
+                            </div>
+
+                            <div class="pa-3">
+                                <h3 class="overline">F-Score</h3>
+                                <h5 class="caption">{{accuracy[2]}}</h5>
+                            </div>
+
+                            <div class="pa-3">
+                                <h3 class="overline">Support</h3>
+                                <h5 class="caption">{{accuracy[3]}}</h5>
+                            </div>
+                        </div>
+                       
+
+                    </v-card>
+                </v-container>
+
+           </div>
+
+           <div class="pa-15 text-center" v-else>
+               <v-icon>mdi-brain</v-icon>
+               {{AccuracyText}}
+
+           </div>
+
+
+          <v-card-actions>
+            <v-btn
+              color="primary"
+              text
+              @click="Accuracy = false"
+              :disabled="AcurracyStatus"
+            >
+              Close
+            </v-btn>
+
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Approve Tweets -->
     <v-container class="mb-10">
         <div class="float-end">
           <Approvetweets :list="Approvelist" v-if="Approvelist.length != 0"/>
         </div>
     </v-container>
-
+    <!-- Approve Tweets -->
 
 
 
@@ -291,7 +384,7 @@
         v-model="TrainMe"
         persistent
         max-width="500px"
-    >
+        >
         <v-card shaped :loading="TrainMeStatus">
           <v-card-title>
             Training AI
@@ -411,9 +504,22 @@
           Approvetweets
         },
         data: () => ({
+            //Accuracy
+            Accuracy:false,
+            AcurracyStatus:false,
+            AccuracyText: 'Load Version Accuracy',
+            AIVersions: [],
+            AIVersionAccuracy: [],
+            versionload: false,
+            SelectedVersion: '',
+
+            
+
+            //Training
             TrainMe: false,
             TrainMeText: "Performing this action may take a several minute",
             TrainMeStatus:false,
+
             alert: true,
             selectedItem: 1,
             activekey: null,
@@ -557,6 +663,65 @@
                 this.load = false;
             },
 
+            async get_ai_versions (){
+                this.versionload = true;
+                this.AIVersions = []
+                try{
+
+
+                const versions = await this.$axios.get('/Tweet/getVersions/');
+                
+                const versionlist = await versions.data;
+
+                if(versions.status == 200){
+                this.AIVersions = versionlist;
+                }
+
+                }catch {
+
+                alert("Failed loading AI versions");
+
+                }
+                this.versionload = false;
+            },
+
+            async get_ai_accuracy (){
+                this.AIVersionAccuracy = []
+                this.AcurracyStatus = true;
+                try{
+                
+
+                this.AccuracyText = "Preparing to load " + this.SelectedVersion + " please wait.."
+
+                const versionAccuracy = await this.$axios.get('/Tweet/useVersion/?version='+`${this.SelectedVersion}`);
+                
+                const versionData = await versionAccuracy.data;
+
+                if(versionAccuracy.status == 200){
+                
+                    let key = ['Anouncement','Casualty and Damage','Call for Help','Others'];
+                    this.AIVersionAccuracy = versionData;
+
+                    let data = this.AIVersionAccuracy.avg_ascore;
+
+                
+                        for (let x = 0; x < data.length; x++) {
+                            data[x]["classified"] = key[x]
+                        }
+                    
+                    this.AIVersionAccuracy.avg_ascore = data
+
+                }
+
+                }catch {
+
+                alert("Failed to load version accuracy");
+
+                }
+                this.AcurracyStatus = false;
+            },
+
+
             async getAllUsers (){
 
                 const users = await this.$axios.get('http://localhost:3000/api/auth/registereduserlist');
@@ -577,6 +742,7 @@
 
                 if(training.status == 200){
                     this.TrainMeText = "Training Done!"
+                    this.get_ai_versions();
                 }
 
                 }catch {
@@ -658,9 +824,14 @@
             },
 
         },
+        watch:{
+            SelectedVersion : function(){
+                this.get_ai_accuracy();
+            }
+        },
         mounted(){
             this.get_all_saves();
-            this.getAllUsers();
+            this.getAllUsers()
         }
     }
 </script>

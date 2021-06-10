@@ -39,7 +39,6 @@
                     </v-btn>
                     
                     <div class="mt-2">
-                      <v-btn class="float-start caption" text>Forgot password</v-btn>
                       <v-btn to="/register" text class="float-end caption">Register here</v-btn>
                     </div>
                   </v-container>
@@ -54,8 +53,8 @@
             valid: false,
             passwordType: false,
             userInfo : {
-                email: 'Teqe@gmail.com',
-                pass: '1234'
+                email: '',
+                pass: ''
             },
             
             nameRules: [

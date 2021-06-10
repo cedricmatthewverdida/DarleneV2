@@ -3,42 +3,36 @@
     "name": "admin",
     "path": "/admin",
     "component": "D:\\\\github\\\\DarleneV2\\\\pages\\\\admin.vue",
-    "chunkName": "pages/admin",
-    "_name": "_d9c2f496"
+    "chunkName": "pages/admin"
   },
   {
     "name": "analytics",
     "path": "/analytics",
     "component": "D:\\\\github\\\\DarleneV2\\\\pages\\\\analytics.vue",
-    "chunkName": "pages/analytics",
-    "_name": "_5855d36c"
+    "chunkName": "pages/analytics"
   },
   {
     "name": "dashboard",
     "path": "/dashboard",
     "component": "D:\\\\github\\\\DarleneV2\\\\pages\\\\dashboard.vue",
-    "chunkName": "pages/dashboard",
-    "_name": "_7ecfeb7a"
+    "chunkName": "pages/dashboard"
   },
   {
     "name": "forecast",
     "path": "/forecast",
     "component": "D:\\\\github\\\\DarleneV2\\\\pages\\\\forecast.vue",
-    "chunkName": "pages/forecast",
-    "_name": "_7b800d05"
+    "chunkName": "pages/forecast"
   },
   {
     "name": "register",
     "path": "/register",
     "component": "D:\\\\github\\\\DarleneV2\\\\pages\\\\register.vue",
-    "chunkName": "pages/register",
-    "_name": "_2bf7ddad"
+    "chunkName": "pages/register"
   },
   {
     "name": "index",
     "path": "/",
     "component": "D:\\\\github\\\\DarleneV2\\\\pages\\\\index.vue",
-    "chunkName": "pages/index",
-    "_name": "_61af31b8"
+    "chunkName": "pages/index"
   }
 ]
