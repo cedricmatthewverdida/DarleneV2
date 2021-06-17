@@ -7,8 +7,7 @@
 
         <v-col md="4" cols="12">
             <v-card
-            elevation="2"
-            shaped
+            elevation="1"
             >
             
               <v-card-title class="display-1">
@@ -31,8 +30,9 @@
 
         <v-col md="8">
             <v-card
-            elevation="2"
-            shaped
+            elevation="1"
+            outlined
+            width="800px"
            >
           
             <v-row no-gutters>
@@ -40,7 +40,7 @@
                 
 
                 <!-- Form -->
-                <LoginForm buttonText="Authenticate" :submitForm="loginUser"/>
+                <LoginForm buttonText="Login" :submitForm="loginUser"/>
                 
               </v-col>
 
@@ -51,7 +51,8 @@
                 <div class="text-xs-center ml-5 mt-14">
                   <v-btn
                     :loading="loading"
-                    class="mt-16"
+                    class="mt-16 caption"
+                    rounded
                     color="error"
                     to="/dashboard"
                     @click="remove"

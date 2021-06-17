@@ -12,8 +12,7 @@ const components = {
   Tweets: () => import('../..\\components\\tweets.vue' /* webpackChunkName: "components/tweets" */).then(c => wrapFunctional(c.default || c)),
   UserAuthForm: () => import('../..\\components\\UserAuthForm.vue' /* webpackChunkName: "components/user-auth-form" */).then(c => wrapFunctional(c.default || c)),
   UserInfo: () => import('../..\\components\\userInfo.vue' /* webpackChunkName: "components/user-info" */).then(c => wrapFunctional(c.default || c)),
-  Userrole: () => import('../..\\components\\userrole.vue' /* webpackChunkName: "components/userrole" */).then(c => wrapFunctional(c.default || c)),
-  VuetifyLogo: () => import('../..\\components\\VuetifyLogo.vue' /* webpackChunkName: "components/vuetify-logo" */).then(c => wrapFunctional(c.default || c))
+  Userrole: () => import('../..\\components\\userrole.vue' /* webpackChunkName: "components/userrole" */).then(c => wrapFunctional(c.default || c))
 }
 
 for (const name in components) {

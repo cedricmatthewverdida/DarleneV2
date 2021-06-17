@@ -17,4 +17,3 @@ You can directly use them in pages and other components without the need to impo
 - `<UserAuthForm>` | `<user-auth-form>` (components/UserAuthForm.vue)
 - `<UserInfo>` | `<user-info>` (components/userInfo.vue)
 - `<Userrole>` | `<userrole>` (components/userrole.vue)
-- `<VuetifyLogo>` | `<vuetify-logo>` (components/VuetifyLogo.vue)

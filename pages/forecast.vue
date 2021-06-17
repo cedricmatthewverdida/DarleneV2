@@ -7,24 +7,14 @@
               v-model="search"
               hide-details 
               label="Search for City" 
-              placeholder="...." 
-              filled 
-              rounded 
-              dense 
+              placeholder="...."
+              rounded
+              filled
               single-line 
               append-icon="mdi-magnify"
+              @keyup.enter="getForecast"
               class="kq">
         </v-text-field>
-
-        <v-btn
-          :loading="loading"
-          rounded
-          class="mt-2"
-          @click="getForecast"
-        >
-          Search City
-        </v-btn>
-
 
   <div v-if="forecast.length != 0">
 

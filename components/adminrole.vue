@@ -51,7 +51,7 @@
                         v-slot="{ active,toggle }"
                     >
                         <v-btn
-                        class="mx-2"
+                        class="mx-2 caption"
                         :input-value="active"
                         active-class="purple white--text"
                         depressed
@@ -92,11 +92,11 @@
 
                                     <v-icon small color="red">
                                     mdi-cards-heart
-                                    </v-icon><span class="caption ml-2 mr-2">{{tweet.faveCount}}</span>
+                                    </v-icon><span class="caption ml-2 mr-2">{{tweet.faveCount | numberFormat}}</span>
 
                                     <v-icon small>
                                     mdi-twitter-retweet
-                                    </v-icon><span class="caption ml-2 mr-2">{{tweet.rtCount}}</span>
+                                    </v-icon><span class="caption ml-2 mr-2">{{tweet.rtCount | numberFormat}}</span>
                                     
                                     <v-icon small>
                                     mdi-label-outline
@@ -218,7 +218,10 @@
                         
                             
                                 <v-btn
+                                    
+                                    class="caption"
                                     rounded
+                                    depressed
                                     v-if="tweetObj.length != 0"
                                     @click="submit_object_in_AI"
                                     :loading="loading"
@@ -496,13 +499,16 @@
     </div>
 </template>
 
+
 <script>
     import moment from 'moment';
     import Approvetweets from '~/components/approvetweet.vue';
     export default {
+
         components : {
           Approvetweets
         },
+
         data: () => ({
             //Accuracy
             Accuracy:false,
@@ -772,8 +778,9 @@
         },
         computed:{
 
+
             validatestring : function (){
-            return this.search.replace("#", "%23");
+                return this.search.replace("#", "%23");
             },
 
             listof_tweetsandcheckifnotdefaultorsorted : function (){
@@ -810,6 +817,8 @@
             }
         },
         filters:{
+
+            
             limitString : function (str){
                 var trimmedString = str.substring(0, 100);
                 return trimmedString + '...';
@@ -822,6 +831,10 @@
             convertDateFormat : function (val){
                 return moment(val).format('MMMM D, YYYY');
             },
+
+            numberFormat : function (num){
+                return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
+            }
 
         },
         watch:{

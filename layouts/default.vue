@@ -58,7 +58,7 @@
           exact
         >
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon :color="item.color">{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title v-text="item.title" />
@@ -76,7 +76,7 @@
           @click="LogOut"
         >
           <v-list-item-action>
-            <v-icon>mdi-logout</v-icon>
+            <v-icon color="#fa3c4c">mdi-logout</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>
@@ -95,21 +95,22 @@
     <v-app-bar
       :clipped-left="clipped"
       app
+      flat
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
 
 
-        <v-btn
+        
+      <v-toolbar-title class="overline" v-text="title" />
+
+      <v-spacer></v-spacer>
+
+      <v-btn
           icon
           @click="changetheme"
         >
           <v-icon>{{check_theme}}</v-icon>
-        </v-btn>
-      <v-toolbar-title v-text="title" />
-
-      <v-spacer></v-spacer>
-
-      
+      </v-btn>
 
 
     </v-app-bar>
@@ -130,11 +131,10 @@
         >
           <v-card
             class="flex"
-            flat
-            tile
+            height="70px"
           >
 
-      <v-card-text class="py-2 text-center">
+      <v-card-text class="py-2 mt-4 caption text-center">
         A Crisis Information Dashboard
         System using Feedback-based Test Classification of
         Real-Time Typhoon-Related Tweets in the Philippines
@@ -174,16 +174,19 @@ export default {
       items: [
         {
           icon: 'mdi-apps',
+          color: '#ffc300',
           title: 'Dashboard',
           to: '/dashboard'
         },
         {
           icon: 'mdi-chart-bar',
+          color: '#44bec7',
           title: 'Analytics',
           to: '/analytics'
         },
         {
           icon: 'mdi-weather-partly-snowy-rainy',
+          color: '#0084ff',
           title: 'Forecast',
           to: '/forecast'
         }

@@ -10,7 +10,7 @@
           v-if="$auth.loggedIn"
         >
           <v-list-item-action>
-            <v-icon>mdi-account-settings</v-icon>
+            <v-icon color="#d696bb">mdi-account-settings</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>

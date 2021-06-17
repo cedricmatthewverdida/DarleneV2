@@ -6,11 +6,12 @@
       :disabled="loadclassification"
       v-model="search"
       rounded
-      outlined
+      filled
       :loading="loadclassification"
       label="Search Tweet"
       prepend-inner-icon="mdi-magnify"
       @keyup.enter="get_classification"
+      class="kq"
     ></v-text-field>
 
 
@@ -266,6 +267,10 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Bahiana&family=Merienda&display=swap');
 .qq{
       max-width: 300px;
+}
+
+.kq{
+      width: 400px;
 }
 
 </style>

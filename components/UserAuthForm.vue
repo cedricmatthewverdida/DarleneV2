@@ -12,6 +12,7 @@
                           required
                           outlined
                           rounded
+                          prepend-inner-icon="mdi-account"
                         ></v-text-field>
 
                         <v-text-field
@@ -21,6 +22,7 @@
                           required
                           outlined
                           rounded
+                          prepend-inner-icon="mdi-key-variant"
                           :type="passwordType ? 'text' : 'password'"
                           :append-icon="passwordType ? 'mdi-eye' : 'mdi-eye-off'"
                           @click:append="passwordType = !passwordType"
@@ -30,7 +32,7 @@
                     <v-btn
                     block
                     color="primary"
-                    large
+                    x-large
                     rounded
                     @click="submitForm(userInfo)"
                     :disabled="!valid"
@@ -54,7 +56,7 @@
             passwordType: false,
             userInfo : {
                 email: '',
-                pass: ''
+                pass: '',
             },
             
             nameRules: [

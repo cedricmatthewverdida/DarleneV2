@@ -11,9 +11,10 @@
             color="primary"
             v-bind="attrs"
             v-on="on"
+            class="overline"
           >
           <sup class="overline">{{list.length}}</sup>
-          <v-icon>mdi-archive-outline</v-icon>
+          <v-icon small>mdi-archive-outline</v-icon>
             Archive
           </v-btn>
         </template>

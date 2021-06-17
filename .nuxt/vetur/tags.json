@@ -31,8 +31,5 @@
   },
   "Userrole": {
     "description": "Auto imported from components/userrole.vue"
-  },
-  "VuetifyLogo": {
-    "description": "Auto imported from components/VuetifyLogo.vue"
   }
 }

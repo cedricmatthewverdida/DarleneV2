@@ -37,7 +37,6 @@
             rounded 
             @keyup.enter="getTweet"
             :loading="load"
-           dense
         ></v-combobox>
 
           <v-btn
@@ -54,12 +53,23 @@
           
           <v-select
             v-model="activecategory"
-            :disabled="!searchmode"
+            v-if="searchmode"
             :items="category"
             label="Category"
-            dense
+            filled
             rounded
-            solo
+            prepend-inner-icon="mdi-robot"
+            class="mt-2 qq"
+          ></v-select>
+
+          <v-select
+            v-model="activecategory"
+            v-else
+            :items="category"
+            label="Select version"
+            filled
+            rounded
+            prepend-inner-icon="mdi-database-search"
             class="mt-2 qq"
           ></v-select>
 
@@ -103,11 +113,11 @@
 
                 <v-icon small color="red">
                   mdi-cards-heart
-                </v-icon><span class="caption ml-2 mr-2">{{tweet.faveCount}}</span>
+                </v-icon><span class="caption ml-2 mr-2">{{tweet.faveCount | numberFormat}}</span>
 
                 <v-icon small>
                   mdi-twitter-retweet
-                </v-icon><span class="caption ml-2 mr-2">{{tweet.rtCount}}</span>
+                </v-icon><span class="caption ml-2 mr-2">{{tweet.rtCount | numberFormat}}</span>
                 
                 <v-icon small>
                   mdi-label-outline
@@ -247,7 +257,6 @@
             v-model="editClassText"
             :items="category"
             label="Classifications"
-            dense
             rounded
             solo
             class="mt-2"
@@ -329,7 +338,7 @@
       Approve:null,
       Approvelist:[],
       items: [
-          '#TyphoonDante',
+          '#TyphoonName',
           '#RescuePH',
           '#ReliefPH',
           '#SafeNow',
@@ -456,6 +465,10 @@
       convertDateFormat : function (val){
         return moment(val).format('MMMM D, YYYY');
       },
+
+      numberFormat : function (num){
+        return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
+      }
 
     }
 
