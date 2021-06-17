@@ -65,7 +65,8 @@
           <v-select
             v-model="activecategory"
             v-else
-            :items="category"
+            :items="AIVersions"
+            :loading="versionload"
             label="Select version"
             filled
             rounded
@@ -351,10 +352,32 @@
           'Casualty and Damage'
       ],
       activecategory: '',
-      load: false
+      load: false,
+      versionload: false,
+      AIVersions: []
+
     }),
 
     methods:{
+
+      async get_ai_versions (){
+          this.versionload = true;
+          this.AIVersions = []
+          try{
+              const versions = await this.$axios.get('/Tweet/getVersions/');  
+              const versionlist = await versions.data;
+
+                if(versions.status == 200){
+                  this.AIVersions = versionlist;
+                }
+
+          }catch {
+
+            alert("Failed loading AI versions");
+
+          }
+            this.versionload = false;
+        },
       
       async getTweet (){
         this.searchStat = true;
@@ -470,6 +493,10 @@
         return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
       }
 
+    },
+
+    mounted (){
+      this.get_ai_versions();
     }
 
   }
