@@ -24,14 +24,24 @@
         <v-card-title>
             Persons who submitted
             <v-spacer></v-spacer>
+
+            <v-btn @click="loadversion = true" text>
+                <v-icon small class="mr-2">mdi-account-outline</v-icon>
+                    Load Dataset for Users
+            </v-btn>
+
             <v-btn @click="Accuracy = true,get_ai_versions()" text>
                 <v-icon small class="mr-2">mdi-brain</v-icon>
                     Use Different Version
             </v-btn>
+
+
             <v-btn @click="TrainMe = true" text>
                 <v-icon small class="mr-2">mdi-robot-outline</v-icon>
                 Train AI.
             </v-btn>
+
+
         </v-card-title>
 
         <v-container>
@@ -283,6 +293,68 @@
         <!-- Registered user -->
 
 
+        <v-dialog
+            v-model="loadversion"
+            persistent
+            max-width="500px"
+        >
+
+        <v-card shaped :loading="AcurracyStatus">
+          <v-card-title>
+              Upload CSV
+          </v-card-title>
+
+
+
+          <v-container>
+
+            <v-file-input
+                show-size
+                label="File input"
+                @change="selectFile"
+                :disabled="uploadProgress"
+            ></v-file-input>
+
+            
+
+          </v-container>
+          
+
+            <v-card-text class="text-center">
+                {{uploadStatus}}
+            </v-card-text>
+
+
+
+          <v-card-actions>
+
+            <v-btn
+              color="primary"
+              text
+              @click="loadversion = false"
+              :disabled="uploadProgress"
+            >
+              Close
+            </v-btn>
+
+            <v-btn
+              color="primary"
+              text
+              @click="uploadDataset"
+              :disabled="currentFile == undefined"
+              :loading="uploadProgress"
+            >
+              Upload Dataset
+            </v-btn>
+
+
+            
+
+
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
+
 
 
 
@@ -510,6 +582,11 @@
         },
 
         data: () => ({
+
+            //Load Version Preview
+
+            loadversion: false,
+
             //Accuracy
             Accuracy:false,
             AcurracyStatus:false,
@@ -559,10 +636,48 @@
             activecategory: '',
             load: false,
             loading: false,
-            users:[]
+            users:[],
+            currentFile: undefined,
+            uploadStatus: '',
+            uploadProgress:false,
         }),
 
         methods : {
+
+           selectFile(file) {
+                this.currentFile = file;
+                console.log(file)
+            },
+
+            async uploadDataset(){
+
+                this.uploadStatus = 'Uploading...'
+                this.uploadProgress = true
+                
+
+                let payload = new FormData();
+
+                payload.append("file", this.currentFile);
+
+                const sending = await this.$axios.post('/api/upload', payload, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data'
+                    }
+                })
+
+                if(sending.status == 200){
+                    const response = await sending.data;
+                        if(response == "success"){
+                            this.currentFile = undefined;
+                            this.uploadStatus = "File upload " + response
+                        }else{
+                            this.uploadStatus = "File upload " + response
+                        }
+                }else{
+                    this.uploadStatus = "File upload failed"
+                }
+                this.uploadProgress = false
+            },  
 
             async delete_from_database(){
 
