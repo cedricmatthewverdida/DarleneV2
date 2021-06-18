@@ -63,13 +63,14 @@
           ></v-select>
 
           <v-select
-            v-model="activecategory"
+            v-model="versionSearch"
             v-else
-            :items="AIVersions"
+            :items="userVersion"
             :loading="versionload"
             label="Select version"
             filled
             rounded
+            :disabled="searchStat"
             prepend-inner-icon="mdi-database-search"
             class="mt-2 qq"
           ></v-select>
@@ -112,11 +113,11 @@
                 
 
 
-                <v-icon small color="red">
+                <v-icon small color="red" v-if="('faveCount' in tweet)">
                   mdi-cards-heart
                 </v-icon><span class="caption ml-2 mr-2">{{tweet.faveCount | numberFormat}}</span>
 
-                <v-icon small>
+                <v-icon small v-if="('rtCount' in tweet)">
                   mdi-twitter-retweet
                 </v-icon><span class="caption ml-2 mr-2">{{tweet.rtCount | numberFormat}}</span>
                 
@@ -130,6 +131,7 @@
                   class="mx-2"
                   icon
                   small
+                  v-if="('tweetLink' in tweet)"
                   :href="tweet.tweetLink" target="_blank"
                 >
                   <v-icon>
@@ -193,13 +195,14 @@
 
                   <v-avatar size="70">
                     <v-img
+                    v-if="('imageUrl' in tweet)"
                     rounded
                     :src="tweet.imageUrl"
                     :lazy-src="tweet.imageUrl">
                     </v-img>
                   </v-avatar>
                 
-                <div class="pa-1 caption">
+                <div class="pa-1 caption" v-if="('tweetAuthor' in tweet)">
                   <v-icon small>
                     mdi-clock-time-eight-outline
                   </v-icon><span class="caption ml-2">{{tweet.tweetTime | dateDayAgo}}</span>
@@ -354,7 +357,8 @@
       activecategory: '',
       load: false,
       versionload: false,
-      AIVersions: []
+      userVersion: [],
+      versionSearch: ''
 
     }),
 
@@ -362,13 +366,13 @@
 
       async get_ai_versions (){
           this.versionload = true;
-          this.AIVersions = []
+          this.userVersion = []
           try{
-              const versions = await this.$axios.get('/Tweet/getVersions/');  
+              const versions = await this.$axios.get('/Tweet/get_foruser/');  
               const versionlist = await versions.data;
 
                 if(versions.status == 200){
-                  this.AIVersions = versionlist;
+                  this.userVersion = versionlist;
                 }
 
           }catch {
@@ -386,9 +390,14 @@
         }
         try{
         this.load = true;
-        const tweets = await this.$axios.get('/Tweet/?title='+`${this.validatestring}`+'&style='+`${this.fetch_default_or_sorted}`);
-        
-         const ListofTweets = await tweets.data;
+
+
+        let url = this.versionSearch == '' ? '/Tweet/?title='+`${this.validatestring}`+'&style='+`${this.fetch_default_or_sorted}` : '/Tweet/search_from_dataset/?keyword='+`${this.validatestring}`+'&version='+`${this.versionSearch}`;
+
+
+
+        const tweets = await this.$axios.get(url);
+        const ListofTweets = await tweets.data;
 
         if(tweets.status == 200){
           this.tweetObj = ListofTweets;
@@ -428,6 +437,8 @@
       Resets : function (){
         this.searchStat = false;
         this.tweetObj = [];
+        this.activecategory = '';
+        this.versionSearch = '';
       },
 
     },
