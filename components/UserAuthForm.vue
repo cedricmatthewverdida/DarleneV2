@@ -12,7 +12,7 @@
                           required
                           outlined
                           rounded
-                          prepend-inner-icon="mdi-account"
+                          prepend-inner-icon="mdi-account-outline"
                         ></v-text-field>
 
                         <v-text-field
@@ -22,7 +22,7 @@
                           required
                           outlined
                           rounded
-                          prepend-inner-icon="mdi-key-variant"
+                          prepend-inner-icon="mdi-lock-outline"
                           :type="passwordType ? 'text' : 'password'"
                           :append-icon="passwordType ? 'mdi-eye' : 'mdi-eye-off'"
                           @click:append="passwordType = !passwordType"

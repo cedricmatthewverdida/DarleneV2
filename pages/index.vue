@@ -53,10 +53,12 @@
                     :loading="loading"
                     class="mt-16 caption"
                     rounded
-                    color="error"
+                    text
+                    color="primary"
                     to="/dashboard"
                     @click="remove"
                   >
+                    <v-icon small class="pa-1">mdi-account-arrow-right-outline</v-icon>
                     Continue as guest
                   </v-btn>
                 </div>

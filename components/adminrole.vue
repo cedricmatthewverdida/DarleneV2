@@ -100,13 +100,15 @@
                                     
 
 
-                                    <v-icon small color="red">
+                                    <v-icon v-if="('faveCount' in tweet)" small color="red">
                                     mdi-cards-heart
-                                    </v-icon><span class="caption ml-2 mr-2">{{tweet.faveCount | numberFormat}}</span>
+                                    </v-icon>
+                                    <span v-if="('faveCount' in tweet)" class="caption ml-2 mr-2">{{tweet.faveCount | numberFormat}}</span>
 
-                                    <v-icon small>
+                                    <v-icon v-if="('rtCount' in tweet)" small>
                                     mdi-twitter-retweet
-                                    </v-icon><span class="caption ml-2 mr-2">{{tweet.rtCount | numberFormat}}</span>
+                                    </v-icon>
+                                    <span v-if="('rtCount' in tweet)" class="caption ml-2 mr-2">{{tweet.rtCount | numberFormat}}</span>
                                     
                                     <v-icon small>
                                     mdi-label-outline
@@ -115,6 +117,7 @@
                                     <v-spacer></v-spacer>
                                     
                                     <v-btn
+                                    v-if="('tweetLink' in tweet)"
                                     class="mx-2"
                                     icon
                                     small
@@ -177,6 +180,7 @@
                                     <v-sheet
                                     height="40"
                                     width="100"
+                                    v-if="('imageUrl' in tweet)"
                                     >
 
                                     <v-avatar size="70">

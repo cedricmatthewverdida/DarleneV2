@@ -25,7 +25,7 @@
       <div class="d-flex flex-row">
 
         <v-combobox
-            :disabled="searchStat"
+            :disabled="!searchactiveStatus || searchStat || versionSearch == '' && searchactivetype == 'version' "
             v-model="search"
             :items="items"
             label="Search keyword"
@@ -35,7 +35,7 @@
             filled
             prepend-inner-icon="mdi-magnify"
             rounded 
-            @keyup.enter="getTweet"
+            @keyup.enter="initiate_search"
             :loading="load"
         ></v-combobox>
 
@@ -48,23 +48,35 @@
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
 
-        </div>
+        </div
+        
+        >
         <div class="d-flex flex-row mb-6">
           
           <v-select
-            v-model="activecategory"
-            v-if="searchmode"
-            :items="category"
-            label="Category"
+            v-model="searchactivetype"
+            :items="searchtype"
+            label="Select Type"
             filled
             rounded
-            prepend-inner-icon="mdi-robot"
             class="mt-2 qq"
+            v-if="!searchactiveStatus"
           ></v-select>
 
+            <v-btn
+            fab
+            depressed
+            class="mt-2 ml-1"
+            @click="searchactiveStatus = true"
+            v-if="searchactivetype != '' && !searchactiveStatus"
+            >
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
+          
+  <!-- Version Search -->
           <v-select
             v-model="versionSearch"
-            v-else
+            v-if="searchactiveStatus && searchactivetype == 'version'"
             :items="userVersion"
             :loading="versionload"
             label="Select version"
@@ -73,14 +85,47 @@
             :disabled="searchStat"
             prepend-inner-icon="mdi-database-search"
             class="mt-2 qq"
+          >
+          </v-select>
+
+
+          
+  <!-- Version Search -->
+
+
+    <!-- Tweepy Search -->
+
+          <v-select
+            v-model="activecategory"
+            v-if="searchactiveStatus"
+            :items="category"
+            label="Category"
+            filled
+            rounded
+            prepend-inner-icon="mdi-robot"
+            :disabled="!tweepysearchmode"
+            class="mt-2 qq"
           ></v-select>
 
           <v-switch class="ml-3"
-            :disabled="searchStat"
-            v-model="searchmode"
+            v-if="searchactiveStatus && searchactivetype == 'tweepy'"
+            v-model="tweepysearchmode"
             inset
-            :label="`Search mode: ${this.searchmode ? 'Advanced search' : 'Normal search'}`"
+            :disabled="searchStat"
+            :label="`Search mode: ${this.tweepysearchmode ? 'Advanced search' : 'Normal search'}`"
           ></v-switch>
+
+          <v-switch class="ml-3"
+            v-if="searchactiveStatus && searchactivetype == 'version' "
+            v-model="tweepysearchmode"
+            inset
+            :disabled="searchStat || versionSearch == ''"
+            :label="`Search mode: ${this.tweepysearchmode ? 'Advanced search' : 'Normal search'}`"
+          ></v-switch>
+
+  <!-- Tweepy Search -->
+          
+       
 
         </div>
     </div>
@@ -97,7 +142,7 @@
             show-arrows
           >
             <v-slide-item
-              v-for="(tweet,n) in listof_tweetsandcheckifnotdefaultorsorted"
+              v-for="(tweet,n) in this_act_as_search_engine_mode"
               :key="n"
               v-slot="{ toggle }"
             >
@@ -115,15 +160,18 @@
 
                 <v-icon small color="red" v-if="('faveCount' in tweet)">
                   mdi-cards-heart
-                </v-icon><span class="caption ml-2 mr-2">{{tweet.faveCount | numberFormat}}</span>
+                </v-icon>
+                <span v-if="('faveCount' in tweet)" class="caption ml-2 mr-2">{{tweet.faveCount | numberFormat}}</span>
 
                 <v-icon small v-if="('rtCount' in tweet)">
                   mdi-twitter-retweet
-                </v-icon><span class="caption ml-2 mr-2">{{tweet.rtCount | numberFormat}}</span>
+                </v-icon>
+                <span v-if="('rtCount' in tweet)" class="caption ml-2 mr-2">{{tweet.rtCount | numberFormat}}</span>
                 
                 <v-icon small>
                   mdi-label-outline
-                </v-icon><span class="caption ml-2">{{tweet.label}}</span>
+                </v-icon>
+                <span class="caption ml-2">{{tweet.label}}</span>
 
                 <v-spacer></v-spacer>
                 
@@ -191,11 +239,11 @@
                 <v-sheet
                   height="40"
                   width="100"
+                  v-if="('imageUrl' in tweet)"
                 >
 
                   <v-avatar size="70">
                     <v-img
-                    v-if="('imageUrl' in tweet)"
                     rounded
                     :src="tweet.imageUrl"
                     :lazy-src="tweet.imageUrl">
@@ -232,8 +280,8 @@
       <v-img 
       max-height="500"
       max-width="800"
-      :src="require('@/assets/searching.png')">
-
+      :src="require('@/assets/searching.png')"
+      >
       </v-img>
     </div>
 
@@ -333,7 +381,6 @@
       activeToEditClass: null,
       editClassText: '',
       snackbar: false,
-      searchmode: false,
       searchStat: false,
       text: 'Added to tweet list!',
       timeout: 1000,
@@ -348,21 +395,55 @@
           '#SafeNow',
           '#SafeNow',
       ],
+
+      
       category: [
           'Others',
           'Announcement',
           'Call for Help',
           'Casualty and Damage'
       ],
+
+      searchtype: [
+        'version',
+        'tweepy'
+      ],
+
+      /**
+       * searchactivetype = returns normal or tweepy mode
+       * searchactivestatus = to confirm mode selection and enabled searchbox
+       */
+      searchactivetype:'',
+      searchactiveStatus: false,
+
       activecategory: '',
       load: false,
+      
       versionload: false,
       userVersion: [],
-      versionSearch: ''
+
+      versionSearch: '',
+
+      tweepysearchmode: false,
+      
 
     }),
 
     methods:{
+
+
+      initiate_search : function (){
+
+        
+        if(this.searchactivetype == "version"){
+          this.search_in_version()
+        }
+
+        if(this.searchactivetype == "tweepy"){
+            this.search_in_tweepy();
+        }
+
+      },
 
       async get_ai_versions (){
           this.versionload = true;
@@ -383,17 +464,44 @@
             this.versionload = false;
         },
       
-      async getTweet (){
+      async search_in_tweepy (){
         this.searchStat = true;
-        if(this.searchmode && this.activecategory == ''){
+        if(this.tweepysearchmode && this.activecategory == ''){
           this.activecategory = "Others";
         }
         try{
         this.load = true;
 
 
-        let url = this.versionSearch == '' ? '/Tweet/?title='+`${this.validatestring}`+'&style='+`${this.fetch_default_or_sorted}` : '/Tweet/search_from_dataset/?keyword='+`${this.validatestring}`+'&version='+`${this.versionSearch}`;
+        // let url = this.versionSearch == '' ? : '/Tweet/search_from_dataset/?keyword='+`${this.validatestring}`+'&version='+`${this.versionSearch}`;
 
+        let url = '/Tweet/?title='+`${this.validatestring}`+'&style='+`${this.fetch_default_or_sorted}`;
+
+
+        const tweets = await this.$axios.get(url);
+        const ListofTweets = await tweets.data;
+
+        if(tweets.status == 200){
+          this.tweetObj = ListofTweets;
+        }
+
+        }catch {
+          this.searchStat = false;
+          alert("Failed to fetch");
+        }
+        this.load = false;
+      },
+
+      async search_in_version (){
+        this.searchStat = true;
+        if(this.tweepysearchmode && this.activecategory == ''){
+          this.activecategory = "Others";
+        }
+        try{
+        this.load = true;
+
+
+        let url = '/Tweet/search_from_dataset/?keyword='+`${this.validatestring}`+'&version='+`${this.versionSearch}`
 
 
         const tweets = await this.$axios.get(url);
@@ -412,16 +520,16 @@
 
       addToList : function (key){
 
-          let Data = this.listof_tweetsandcheckifnotdefaultorsorted[key];
+          let Data = this.this_act_as_search_engine_mode[key];
 
           this.Approvelist.push(
             Data
           )
-          return this.$delete(this.listof_tweetsandcheckifnotdefaultorsorted, key);
+          return this.$delete(this.this_act_as_search_engine_mode, key);
       },
       addToList_edited_key : function (){
           
-          let Data = this.listof_tweetsandcheckifnotdefaultorsorted[this.activeToEditClass];
+          let Data = this.this_act_as_search_engine_mode[this.activeToEditClass];
 
           Data.label = this.convert_to_abrevations
 
@@ -431,15 +539,23 @@
             Data
           )
 
-        return this.$delete(this.listof_tweetsandcheckifnotdefaultorsorted, this.activeToEditClass);
+        return this.$delete(this.this_act_as_search_engine_mode, this.activeToEditClass);
 
       },
       Resets : function (){
+        this.tweepysearchmode = false
+        this.search = ''
+        this.searchactivetype = ''
+        this.searchactiveStatus = false
         this.searchStat = false;
         this.tweetObj = [];
         this.activecategory = '';
         this.versionSearch = '';
       },
+
+    
+
+  
 
     },
     computed:{
@@ -448,21 +564,75 @@
       },
 
 
-      listof_tweetsandcheckifnotdefaultorsorted : function (){
-        if(this.searchmode){
-          if(this.activecategory == "Anouncement")
-            return this.tweetObj.CA.tweets;
-          if(this.activecategory == "Others")
-            return this.tweetObj.O.tweets; 
-          if(this.activecategory == "Casualty and Damage")
-            return this.tweetObj.CD.tweets; 
-          if(this.activecategory == "Call for Help")
-            return this.tweetObj.CH.tweets;
-          if(this.activecategory == '')
-            return this.tweetObj.tweets;
-        }else{
-          return this.tweetObj.tweets;
-        }
+      this_act_as_search_engine_mode : function (){
+         /**
+         * Display and check if user sets search mode
+         * 
+         * wait for searchtype
+         */
+
+     
+
+          if(this.searchactivetype == "tweepy"){
+            
+            if(this.tweepysearchmode){
+
+              if(this.activecategory == "Announcement"){
+                console.log(this.tweetObj.CA.tweets)
+                return this.tweetObj.CA.tweets;
+              }
+
+              if(this.activecategory == "Others"){
+                console.log(this.tweetObj.CA.tweets)
+                return this.tweetObj.O.tweets; 
+              }
+
+              if(this.activecategory == "Casualty and Damage"){
+                console.log(this.tweetObj.CA.tweets)
+                return this.tweetObj.CD.tweets; 
+              }
+
+              if(this.activecategory == "Call for Help"){
+                console.log(this.tweetObj.CA.tweets)
+                return this.tweetObj.CH.tweets;
+              }
+
+            }else{
+              return this.tweetObj.tweets;
+            }
+
+          }
+
+          if(this.searchactivetype == "version"){
+            
+            if(this.tweepysearchmode){
+
+              if(this.activecategory == "Announcement"){
+                console.log(this.tweetObj.CA.tweets)
+                return this.tweetObj.CA.tweets;
+              }
+
+              if(this.activecategory == "Others"){
+                console.log(this.tweetObj.CA.tweets)
+                return this.tweetObj.O.tweets; 
+              }
+
+              if(this.activecategory == "Casualty and Damage"){
+                console.log(this.tweetObj.CA.tweets)
+                return this.tweetObj.CD.tweets; 
+              }
+
+              if(this.activecategory == "Call for Help"){
+                console.log(this.tweetObj.CA.tweets)
+                return this.tweetObj.CH.tweets;
+              }
+
+            }else{
+              return this.tweetObj.tweets;
+            }
+
+          }
+
       },
 
       convert_to_abrevations : function (){
@@ -478,7 +648,7 @@
       },
 
       fetch_default_or_sorted : function () {
-        return !this.searchmode ? "DEFAULT" : "SORTED";
+        return !this.tweepysearchmode ? "DEFAULT" : "SORTED";
       }
 
     },

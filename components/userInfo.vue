@@ -36,7 +36,7 @@
                 
             <v-text-field
                 v-model="AccountName"
-                solo
+                filled
                 rounded
                 readonly
                 label="Prepend inner"
@@ -88,7 +88,7 @@
 
                 <v-text-field
                     v-model="AccountNameTmp"
-                    solo
+                    filled
                     rounded
                     label="Enter Name"
                     prepend-inner-icon="mdi-account"
@@ -136,7 +136,7 @@
 
                 <v-text-field
                     v-model="Password"
-                    solo
+                    filled
                     rounded
                     type="password"
                     label="Enter new password"

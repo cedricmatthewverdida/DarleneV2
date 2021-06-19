@@ -31,12 +31,12 @@
                         :key="n"
                         large
                         >
-                        <template v-slot:icon>
+                        <template v-if="('imageUrl' in tweet)" v-slot:icon>
                             <v-avatar>
                             <img :src="tweet.imageUrl" :Lazy-src="tweet.imageUrl">
                             </v-avatar>
                         </template>
-                        <template v-slot:opposite>
+                        <template v-if="('tweetAuthor' in tweet)" v-slot:opposite>
                             <span>@{{tweet.tweetAuthor}}</span>
                         </template>
                         <v-card class="elevation-2">
@@ -59,17 +59,19 @@
                                   </v-container>
                                 </p>
                                 <v-container>
-                                  <small class="mt-5 text-center caption">
-                                    <v-icon small color="red">
+                                  <small v-if="('faveCount' in tweet)" class="mt-5 text-center caption">
+                                    <v-icon v-if="('faveCount' in tweet)" small color="red">
                                       mdi-cards-heart
                                     </v-icon><span class="caption ml-2 mr-2">{{tweet.faveCount}}</span>
 
-                                    <v-icon small>
+                                    <v-icon v-if="('rtCount' in tweet)" small>
                                       mdi-twitter-retweet
-                                    </v-icon><span class="caption ml-2 mr-2">{{tweet.rtCount}}</span>
+                                    </v-icon
+                                    ><span v-if="('rtCount' in tweet)" class="caption ml-2 mr-2">{{tweet.rtCount}}</span>
                                     <v-icon small>
                                       mdi-clock-time-eight-outline
-                                    </v-icon><span class="caption ml-2">{{tweet.tweetTime | dateDayAgo}}</span>
+                                    </v-icon>
+                                    <span v-if="('tweetTime' in tweet)" class="caption ml-2">{{tweet.tweetTime | dateDayAgo}}</span>
                                     <v-icon small>
                                       mdi-label-outline
                                     </v-icon><span class="caption ml-2">{{tweet.label}}</span>
