@@ -41,6 +41,11 @@ export default {
       path: '/api' , handler: '~/api/index.js'
     }
   ],
+  
+  export default {
+    serverMiddleware:
+      process.env.NODE_ENV === 'production' ? [] : ['~/api/index.js'],
+  },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
